@@ -67,18 +67,34 @@ Vagrant.configure("2") do |config|
     # backing providers for Vagrant. These expose provider-specific options.
     # Example for VirtualBox:
     #
-    config.vm.provider "virtualbox" do |vb|
-      # Display the VirtualBox GUI when booting the machine
-      vb.gui = true
+    # Macの場合の設定
+    if Vagrant::Util::Platform.darwin?
+      config.vm.provider "vmware_fusion" do |vmware|
+        vmware.gui = true
+        vmware.vmx["numvcpus"] = "4"
+        vmware.vmx["memsize"] = "8192"
+        # ファイル共有の設定
+        config.vm.synced_folder ".", "/vagrant"
+      end
+    # Linuxの場合の設定
+    elsif Vagrant::Util::Platform.linux?
+    # Windowsの場合の設定
+    elsif Vagrant::Util::Platform.windows?
+      config.vm.provider "hyperv" do |hv|
+        config.vm.synced_folder ".", "/vagrant", type: "smb"
+        hv.maxmemory = "8192"
+      end
+    else
+      config.vm.provider "virtualbox" do |vb|
+        # Display the VirtualBox GUI when booting the machine
+        vb.gui = true
 
-      # Customize the amount of memory on the VM:
+        # Customize the amount of memory on the VM:
         vb.memory = "8192"
+      end
+      # その他の場合の設定
     end
 
-    config.vm.provider "hyperv" do |hv|
-      config.vm.synced_folder ".", "/vagrant", type: "smb"
-      hv.maxmemory = "8192"
-    end
     #
     # View the documentation for the provider you are using for more
     # information on available options.

@@ -8,6 +8,9 @@ dnf -y groupinstall "Server with GUI"
 # localectl list-x11-keymap-models
 localectl set-x11-keymap jp apple_laptop
 
+# timezonをAsia/Tokyoにする
+timedatectl set-timezone Asia/Tokyo
+
 systemctl set-default graphical.target
 
 # guiで普段使いするなら、vagrantユーザーはvagrantコマンドから操作のみ使うことにして、
